@@ -1,4 +1,4 @@
-name: Build and deploy Quarkus app to Azure Web App - reviews-tech-challenge-4
+name: Build and deploy JAR app to Azure Web App - reviews-tech-challenge-4
 
 on:
   push:
@@ -15,20 +15,20 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up Java version
+      - name: Set up Java 21
         uses: actions/setup-java@v4
         with:
           java-version: '21'
           distribution: 'microsoft'
 
-      - name: Build Quarkus runnable JAR
-        run: mvn clean package -Dquarkus.package.type=uber-jar
+      - name: Build Quarkus JAR
+        run: mvn clean package -Dquarkus.package.type=uber-jar -Dquarkus.package.output-name=app
 
-      - name: Upload artifact for deployment job
+      - name: Upload artifact for deployment
         uses: actions/upload-artifact@v4
         with:
           name: java-app
-          path: target/*-runner.jar   # Only the runnable JAR
+          path: target/app-runner.jar
 
   deploy:
     runs-on: ubuntu-latest
@@ -55,4 +55,4 @@ jobs:
         with:
           app-name: 'reviews-tech-challenge-4'
           slot-name: 'Production'
-          package: target/*-runner.jar
+          package: target/app-runner.jar
